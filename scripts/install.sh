@@ -10,7 +10,7 @@ ARGOCD_VERSION="v3.5.3"
 ROLLOUTS_VERSION="v1.10.0"
 CLUSTER="cicd"
 IMAGE_REPO="ghcr.io/9m7fjfpv9k-cyber/taskflow"
-LAB_IMAGES="${IMAGE_REPO}:1.0.0 ${IMAGE_REPO}:1.1.0 ${IMAGE_REPO}:2.0.0 ${IMAGE_REPO}:2.1.0 curlimages/curl:latest grafana/k6:latest"
+LAB_IMAGES="${IMAGE_REPO}:1.0.0 ${IMAGE_REPO}:1.1.0 ${IMAGE_REPO}:2.0.0 ${IMAGE_REPO}:2.1.0 ${IMAGE_REPO}:2.2.0 curlimages/curl:latest grafana/k6:latest"
 
 BIN_DIR="${HOME}/.local/bin"
 mkdir -p "${BIN_DIR}"
