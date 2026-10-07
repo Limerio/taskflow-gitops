@@ -73,3 +73,8 @@ kubectl argo rollouts promote taskflow -n taskflow
 La promotion fait basculer le service `taskflow` vers la candidate. La commande de promotion ne change pas le tag de l’image dans Git. Pour publier une autre version, modifiez le manifeste et fusionnez un nouveau changement.
 
 <img src="./assets/argo-rollout.png" alt="argo running"/>
+
+
+L’abort ne modifie pas Git : le manifeste demande toujours 2.1.0, donc Argo CD reste **Synced / Degraded**. La prochaine étape est une PR de revert vers 2.0.0 pour retrouver **Healthy**.
+
+<img src="./assets/canary.png" />
