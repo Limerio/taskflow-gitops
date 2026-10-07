@@ -37,5 +37,9 @@ Il peut être relancé sans risque.
 
 ## Équipe
 
-<!-- Noms du binôme -->
-- À compléter
+- Vincent R
+- Brendan B
+
+## Result
+
+<img src="./assets//argo-running.png" alt="argo running"/>
