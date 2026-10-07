@@ -43,3 +43,5 @@ Il peut être relancé sans risque.
 ## Result
 
 <img src="./assets//argo-running.png" alt="argo running"/>
+
+Bonus answer: Quand on supprime le service.yaml par prune ArgoCD recréé directement la ressource.
