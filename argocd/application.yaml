@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/Limerio/taskflow-gitops.git
     targetRevision: main
-    path: apps/taskflow/bluegreen
+    path: apps/taskflow/canary
   destination:
     server: https://kubernetes.default.svc
     namespace: taskflow
