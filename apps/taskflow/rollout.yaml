@@ -1,11 +1,15 @@
-apiVersion: apps/v1
-kind: Deployment
+# Canary : la nouvelle version reçoit une part croissante du trafic.
+# Sans maillage de service, la part de trafic suit la proportion de pods :
+# 4 réplicas → 25 % = 1 pod sur 4.
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: taskflow
   labels:
     app: taskflow
 spec:
   replicas: 4
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: taskflow
@@ -16,7 +20,7 @@ spec:
     spec:
       containers:
         - name: taskflow
-          image: ghcr.io/9m7fjfpv9k-cyber/taskflow:1.0.0
+          image: ghcr.io/9m7fjfpv9k-cyber/taskflow:2.0.0
           ports:
             - name: http
               containerPort: 8000
@@ -36,3 +40,14 @@ spec:
               memory: 64Mi
             limits:
               memory: 256Mi
+  strategy:
+    canary:
+      steps:
+        - setWeight: 25
+        - pause: {}
+        - setWeight: 50
+        - pause:
+            duration: 60s
+        - setWeight: 75
+        - pause:
+            duration: 30s
