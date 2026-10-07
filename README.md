@@ -25,11 +25,13 @@ Il peut être relancé sans risque.
 | --- | --- |
 | `apps/taskflow/` | Les manifests surveillés par Argo CD |
 | `argocd/application.yaml` | Déclare l'application dans Argo CD |
-| `exemples/bluegreen/` | Manifests pour le déploiement Blue-Green |
+| `apps/taskflow/bluegreen/` | Manifests du déploiement Blue-Green suivis par Argo CD |
 | `exemples/canary/` | Manifests pour le déploiement Canary |
 | `scripts/install.sh` | Installation de l'environnement |
 | `scripts/argocd-ui.sh` | Ouvre l'interface d'Argo CD |
 | `scripts/observe.sh` | Montre quelle version répond, et avec quel code HTTP |
+
+
 
 ## Images disponibles
 
@@ -40,8 +42,34 @@ Il peut être relancé sans risque.
 - Vincent R
 - Brendan B
 
-## Result
+## Result Matin
 
-<img src="./assets//argo-running.png" alt="argo running"/>
+<img src="./assets/argo-running.png" alt="argo running"/>
 
 Bonus answer: Quand on supprime le service.yaml par prune ArgoCD recréé directement la ressource.
+
+## Aprem
+
+### Déploiement Blue-Green
+
+Argo CD suit `apps/taskflow/bluegreen/`, qui contient le Rollout et les services `taskflow` et `taskflow-preview`. Le service `taskflow` sert la version active. Le service `taskflow-preview` sert la version candidate.
+
+Pour lancer un déploiement, changez le tag de l’image dans `apps/taskflow/bluegreen/rollout.yaml`, puis fusionnez le changement dans `main`. Argo CD synchronise le Rollout et Argo Rollouts démarre les pods de la candidate. La promotion automatique est désactivée.
+
+Observez les réponses de production et de la candidate :
+
+```bash
+./scripts/observe.sh taskflow
+./scripts/observe.sh taskflow-preview
+```
+
+Quand la candidate est prête, faites la promotion et vérifiez le trafic de production :
+
+```bash
+kubectl argo rollouts promote taskflow -n taskflow
+./scripts/observe.sh taskflow
+```
+
+La promotion fait basculer le service `taskflow` vers la candidate. La commande de promotion ne change pas le tag de l’image dans Git. Pour publier une autre version, modifiez le manifeste et fusionnez un nouveau changement.
+
+<img src="./assets/argo-rollout.png" alt="argo running"/>
