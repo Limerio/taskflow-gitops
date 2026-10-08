@@ -98,3 +98,7 @@ L’abort ne modifie pas Git : le manifeste demande toujours 2.1.0, donc Argo CD
 - **8 octobre** — Diagnostic : les CRD Rollouts et AnalysisTemplates sont établies, mais l'Application Argo CD pointe `apps/taskflow/canary`; les ressources d'analyse sont sous `apps/taskflow/robustesse`. Aucun AnalysisRun 2.1.0 ni 2.2.0 n'est présent dans le cluster.
 
 Le postmortem et les sorties de diagnostic sont dans [`apps/taskflow/robustesse/postmortem-modele.md`](apps/taskflow/robustesse/postmortem-modele.md) et [`docs/incidents/captures/`](docs/incidents/captures/). Les AnalysisRuns demandés (2.1.0 en échec et 2.2.0 en succès) n'ayant pas été créés, aucune capture d'exécution ne peut être jointe; il faudra rejouer le scénario après correction du chemin GitOps.
+
+## Rollout 2.0.0 
+
+![rollout](./assets/rollout-2.0.0.png)
