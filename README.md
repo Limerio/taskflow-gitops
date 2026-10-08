@@ -88,3 +88,13 @@ L’abort ne modifie pas Git : le manifeste demande toujours 2.1.0, donc Argo CD
 ### Test de charge 
 
 ![charge](charge-test.png)
+
+### Journal d'incident canary — 7 octobre 2026
+
+- **13:26:30 UTC** — Rollout non sain pendant la révision 3 (image 2.1.0).
+- **13:26:39 UTC** — Rollout en pause.
+- **13:27:24 UTC** — Argo Rollouts abort la révision 3.
+- **13:27:26 UTC** — Les quatre réplicas stables sont disponibles; l'image stable est 2.0.0.
+- **8 octobre** — Diagnostic : les CRD Rollouts et AnalysisTemplates sont établies, mais l'Application Argo CD pointe `apps/taskflow/canary`; les ressources d'analyse sont sous `apps/taskflow/robustesse`. Aucun AnalysisRun 2.1.0 ni 2.2.0 n'est présent dans le cluster.
+
+Le postmortem et les sorties de diagnostic sont dans [`apps/taskflow/robustesse/postmortem-modele.md`](apps/taskflow/robustesse/postmortem-modele.md) et [`docs/incidents/captures/`](docs/incidents/captures/). Les AnalysisRuns demandés (2.1.0 en échec et 2.2.0 en succès) n'ayant pas été créés, aucune capture d'exécution ne peut être jointe; il faudra rejouer le scénario après correction du chemin GitOps.

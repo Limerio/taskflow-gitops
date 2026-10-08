@@ -1,0 +1,25 @@
+$ kubectl get crd rollouts.argoproj.io analysistemplates.argoproj.io
+NAME                            ESTABLISHED
+rollouts.argoproj.io            True
+analysistemplates.argoproj.io   True
+
+$ kubectl -n taskflow get analysistemplate,analysisrun,configmap,svc
+NAME                         DATA   AGE
+configmap/kube-root-ca.crt   1      23h
+
+NAME               TYPE        CLUSTER-IP        EXTERNAL-IP   PORT(S)   AGE
+service/taskflow   ClusterIP   192.168.194.253   <none>        80/TCP    23h
+
+$ kubectl -n taskflow get rollout taskflow -o jsonpath
+image=ghcr.io/9m7fjfpv9k-cyber/taskflow:2.1.0
+abort=true
+abortedAt=2026-10-07T13:27:24Z
+message=RolloutAborted: Rollout aborted update to revision 3
+stableRS=c6cf57bd6
+
+
+$ kubectl -n taskflow get rs
+NAME                  DESIRED   CURRENT   READY   AGE
+taskflow-78cdc8775b   0         0         0       19h
+taskflow-c6cf57bd6    4         4         4       19h
+taskflow-df976ccb5    0         0         0       19h
