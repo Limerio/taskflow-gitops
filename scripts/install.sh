@@ -65,7 +65,9 @@ kubectl -n argocd patch configmap argocd-cm --type merge -p '{"data":{"timeout.r
 
 step "Argo Rollouts ${ROLLOUTS_VERSION}"
 kubectl create namespace argo-rollouts --dry-run=client -o yaml | kubectl apply -f - >/dev/null
-kubectl apply -n argo-rollouts \
+# Server-side apply : les CRD Rollouts dépassent 256 Ko une fois l'annotation
+# last-applied-configuration ajoutée par un apply client-side.
+kubectl apply -n argo-rollouts --server-side --force-conflicts \
   -f "https://github.com/argoproj/argo-rollouts/releases/download/${ROLLOUTS_VERSION}/install.yaml" >/dev/null
 
 step "Attente du démarrage (quelques minutes la première fois)"
