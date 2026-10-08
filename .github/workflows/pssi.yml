@@ -40,7 +40,7 @@ jobs:
           while read -r image; do
             echo "::group::Trivy ${image}"
             docker run --rm -v "$PWD:/work" -w /work aquasec/trivy:0.75.0 image \
-              --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 "${image}" || status=1
+              --severity HIGH,CRITICAL --ignore-unfixed --ignorefile .trivyignore --exit-code 1 "${image}" || status=1
             echo "::endgroup::"
           done < images.txt
           exit "${status}"

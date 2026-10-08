@@ -102,3 +102,8 @@ Le postmortem et les sorties de diagnostic sont dans [`apps/taskflow/robustesse/
 ## Rollout 2.0.0 
 
 ![rollout](./assets/rollout-2.0.0.png)
+
+
+## Trivy erreur
+
+![trivy](./assets/error-trivy.png)
