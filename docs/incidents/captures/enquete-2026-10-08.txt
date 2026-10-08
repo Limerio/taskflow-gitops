@@ -1,0 +1,53 @@
+Enquête du 2026-10-08 — quatre preuves encore présentes dans le cluster.
+Le Rollout est depuis repassé Healthy sur 2.1.0 (révision 4) ; l'échec concerne la révision 3.
+
+1. AnalysisRun en échec
+$ kubectl -n taskflow get analysisrun taskflow-c6cf57bd6-3-1
+phase: Failed
+startedAt: 2026-10-08T09:25:45Z
+completedAt: 2026-10-08T09:26:22Z
+revision: 3
+step-index: 1
+pod-template-hash: c6cf57bd6
+cible: http://taskflow-canary
+message: Metric "test-de-charge-k6" assessed Failed due to failed (1) > failureLimit (0)
+metricResults.test-de-charge-k6.phase: Failed
+count: 1
+failed: 1
+
+2. Logs k6 du Job 6a4445be-66d6-47b8-b05e-538d2b3df86d.test-de-charge-k6.1
+http_req_duration  ✗ 'p(95)<250'  p(95)=304.65ms
+http_req_failed    ✗ 'rate<0.02'  rate=10.71%
+checks_failed: 10.71%  51 out of 476
+✗ statut 200  89% — ✓ 425 / ✗ 51
+time="2026-10-08T09:26:16Z" level=error msg="thresholds on metrics 'http_req_duration, http_req_failed' have been crossed"
+
+3. Événement d'abandon du Rollout
+Warning  AnalysisRunFailed  analysisrun/taskflow-c6cf57bd6-3-1
+  Analysis Completed. Result: Failed
+Warning  MetricFailed  analysisrun/taskflow-c6cf57bd6-3-1
+  Metric 'test-de-charge-k6' Completed. Result: Failed
+Warning  RolloutAborted  rollout/taskflow
+  Rollout aborted update to revision 3: Step-based analysis phase error/failed: Metric "test-de-charge-k6" assessed Failed due to failed (1) > failureLimit (0)
+Normal   ScalingReplicaSet  rollout/taskflow
+  Scaled down ReplicaSet taskflow-c6cf57bd6 (revision 3) from 1 to 0
+Normal   ScalingReplicaSet  rollout/taskflow
+  Scaled up ReplicaSet taskflow-df976ccb5 (revision 2) from 3 to 4
+
+4. Version réellement mesurée
+$ kubectl -n taskflow get rs taskflow-c6cf57bd6 taskflow-df976ccb5
+NAME                 REV  IMAGE                                    DESIRED
+taskflow-c6cf57bd6   3    ghcr.io/9m7fjfpv9k-cyber/taskflow:2.0.0   0
+taskflow-df976ccb5   4    ghcr.io/9m7fjfpv9k-cyber/taskflow:2.1.0   4
+
+Événement du pod candidat :
+Pulled  pod/taskflow-c6cf57bd6-4kfs2
+  Container image "ghcr.io/9m7fjfpv9k-cyber/taskflow:2.0.0" already present on machine
+SwitchService  rollout/taskflow
+  Switched selector for service 'taskflow-canary' from '' to 'c6cf57bd6'
+
+Le test a donc frappé la candidate 2.0.0, pas 2.1.0.
+Après la fusion de main en 2.1.0, le contrôleur a fait un SkipSteps vers le ReplicaSet stable :
+RolloutUpdated  revision 4
+SkipSteps  Rollback to stable ReplicaSets
+État actuel : Healthy, image 2.1.0, abort vide.

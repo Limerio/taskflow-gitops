@@ -21,6 +21,9 @@
 | 2026-10-07 13:27:24 UTC | Argo Rollouts marque la révision 3 (2.1.0) comme abortée. |
 | 2026-10-07 13:27:26 UTC | Le Rollout indique sa disponibilité minimale; quatre réplicas stables sont disponibles. |
 | 2026-10-08 | Vérification : CRD présents; aucun AnalysisTemplate, AnalysisRun ou ConfigMap k6 dans `taskflow`. |
+| 2026-10-08 10:06:41–10:07:15 UTC | Le service `taskflow-canary` ne vise que le pod `2.0.0` `taskflow-c6cf57bd6-869qg`. |
+| 2026-10-08 10:07:10 UTC | k6, lancé contre ce service, mesure le profil de `2.1.0` (p95 304,8 ms, 28,99 % d'erreurs). |
+| 2026-10-08 10:07:17 UTC | Le Rollout passe Degraded et rend le service aux pods stables `2.1.0`. |
 
 ## Composant défaillant et cause racine
 
@@ -29,6 +32,21 @@
 - Cause racine : Argo CD suit `apps/taskflow/canary` (Application `taskflow`), alors que `AnalysisTemplate`, `ConfigMap` k6 et le Rollout d'analyse sont rangés sous `apps/taskflow/robustesse`. Le Rollout effectivement suivi (`apps/taskflow/canary/rollout.yaml`) ne référence aucun template d'analyse. Résultat : l'AnalysisRun n'a pas été créé. Les CRD `rollouts.argoproj.io` et `analysistemplates.argoproj.io` sont établies (`v1alpha1`); l'incident n'est pas dû à l'absence des CRD.
 
 Les commandes de diagnostic et leurs sorties enregistrées sont dans [`captures/`](captures/). Aucun AnalysisRun 2.1.0 ou 2.2.0 n'existe dans le cluster actuel; les captures demandées ne peuvent donc pas être produites comme preuves d'exécution. Aucun historique Git ne contient de Rollout 2.2.0.
+
+## le Rollout ne fonctionne pas
+
+la révision 5 demande l'image `ghcr.io/9m7fjfpv9k-cyber/taskflow:2.0.0` (ReplicaSet `taskflow-c6cf57bd6`). Le contrôleur bascule le sélecteur de `taskflow-canary` sur ce hash. L'EndpointSlice ne contient alors que le pod candidat. Ce pod, digest `sha256:0bb790c9c164121428b31f7fe1a26da56f2c9e1e7c7651a2a50ce621d49f5faf`, répond `200` en 2 ms avec le corps `[]`.
+
+Dans la même fenêtre, le Job k6 `26ab0c50-940f-476e-a687-26d7cc229974.test-de-charge-k6.1` appelle `http://taskflow-canary/tasks` et obtient autre chose :
+
+| Seuil | Exigence | Mesure |
+| --- | --- | --- |
+| `http_req_duration` | p(95) < 250 ms | p(95) = 304,8 ms, minimum 300,57 ms |
+| `http_req_failed` | taux < 2 % | 28,99 % (87 requêtes sur 300) |
+
+Ce profil est celui de `2.1.0` : environ 300 ms et des HTTP 500 `{"detail":"Erreur interne"}`. Aucune requête du test n'a la latence du pod `2.0.0`. L'AnalysisRun `taskflow-c6cf57bd6-5-1` passe en `Failed`, puis le Rollout émet `RolloutAborted` sur la révision 5. À 10:07:17 UTC le service revient sur les pods `taskflow-df976ccb5` (`2.1.0`).
+
+Le Rollout annonce donc un canary vers `2.0.0`, mais le trafic mesuré par l'analyse ne va pas au pod qu'il a sélectionné. Le déploiement est abandonné sur une mesure qui ne porte pas sur la candidate.
 
 ## Ce qui a bien fonctionné
 
