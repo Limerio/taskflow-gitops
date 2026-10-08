@@ -46,13 +46,13 @@ Il peut être relancé sans risque.
 - Vincent R
 - Brendan B
 
-## Result Matin
+## Result Mercredi Matin
 
 <img src="./assets/argo-running.png" alt="argo running"/>
 
 Bonus answer: Quand on supprime le service.yaml par prune ArgoCD recréé directement la ressource.
 
-## Aprem
+## Mercredi Aprem
 
 ### Déploiement Blue-Green
 
@@ -82,3 +82,9 @@ La promotion fait basculer le service `taskflow` vers la candidate. La commande 
 L’abort ne modifie pas Git : le manifeste demande toujours 2.1.0, donc Argo CD reste **Synced / Degraded**. La prochaine étape est une PR de revert vers 2.0.0 pour retrouver **Healthy**.
 
 <img src="./assets/canary.png" />
+
+## Jeudi Matin
+
+### Test de charge 
+
+![charge](charge-test.png)
