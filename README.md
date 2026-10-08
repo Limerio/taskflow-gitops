@@ -87,7 +87,7 @@ L’abort ne modifie pas Git : le manifeste demande toujours 2.1.0, donc Argo CD
 
 ### Test de charge 
 
-![charge](charge-test.png)
+![charge](./assets/charge-test.png)
 
 ### Journal d'incident canary — 7 octobre 2026
 
