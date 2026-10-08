@@ -107,3 +107,5 @@ Le postmortem et les sorties de diagnostic sont dans [`apps/taskflow/robustesse/
 ## Trivy erreur
 
 ![trivy](./assets/error-trivy.png)
+
+![fix tmp trivy](./assets/fix-temp-trivy.png)
