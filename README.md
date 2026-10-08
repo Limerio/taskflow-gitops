@@ -27,15 +27,19 @@ Il peut être relancé sans risque.
 | `argocd/application.yaml` | Déclare l'application dans Argo CD |
 | `apps/taskflow/bluegreen/` | Manifests du déploiement Blue-Green suivis par Argo CD |
 | `exemples/canary/` | Manifests pour le déploiement Canary |
+| `exemples/robustesse/` | Canary avec test de charge k6 automatique, modèle de postmortem |
+| `exemples/ci/` | Pipelines de la mini-PSSI (GitHub Actions et GitLab CI) |
+| `policies/` | Mini-PSSI et règles Rego vérifiées par conftest |
 | `scripts/install.sh` | Installation de l'environnement |
 | `scripts/argocd-ui.sh` | Ouvre l'interface d'Argo CD |
 | `scripts/observe.sh` | Montre quelle version répond, et avec quel code HTTP |
+| `scripts/charge.sh` | Lance à la main le test de charge k6 contre un service |
 
 
 
 ## Images disponibles
 
-`ghcr.io/9m7fjfpv9k-cyber/taskflow` en versions `1.0.0`, `1.1.0`, `2.0.0` et `2.1.0`.
+`ghcr.io/9m7fjfpv9k-cyber/taskflow` en versions `1.0.0`, `1.1.0`, `2.0.0`, `2.1.0` et `2.2.0`.
 
 ## Équipe
 
